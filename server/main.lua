@@ -1,25 +1,25 @@
 local latestKills = {};
 
-AddEventHandler(GetCurrentResourceName() .. ':onPlayerDeath', function(data)
-  if not data.killerServerId then
+AddEventHandler(GetCurrentResourceName() .. ':onPlayerDeath', function(killerServerId)
+  if not killerServerId then
     return;
   end
-
-  if not latestKills[data.killerServerId] then
-    latestKills[data.killerServerId] = {};
+  
+  if not latestKills[killerServerId] then
+    latestKills[killerServerId] = {};
   end
 
-  table.insert(latestKills[data.killerServerId], os.time());
+  table.insert(latestKills[killerServerId], os.time());
 
   local lastKills = {};
 
-  for i = 1, #latestKills[data.killerServerId] do
-    if latestKills[data.killerServerId][i] < os.time() - Config.killsInterval then
-      table.insert(lastKills, latestKills[data.killerServerId][i]);
+  for i = 1, #latestKills[killerServerId] do
+    if latestKills[killerServerId][i] < os.time() - Config.killsInterval then
+      table.insert(lastKills, latestKills[killerServerId][i]);
     end
   end
 
   if #lastKills > Config.killsLimit then
-    return DropPlayer(data.killerServerId, string.format('You killed %s players in %s seconds', #lastKills, Config.killsInterval));
+    return DropPlayer(killerServerId, string.format('You killed %s players in %s seconds', #lastKills, Config.killsInterval));
   end
 end);
